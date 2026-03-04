@@ -1,0 +1,52 @@
+version: 2
+
+semantic_models:
+  - name: int_order_items
+    description: Item-level order line items enriched with order header attributes and a derived item_discount_amount.
+    model: ref('int_order_items')
+    defaults:
+      agg_time_dimension: order_date
+
+    entities:
+      - name: order_item
+        type: primary
+        expr: order_item_key
+      - name: order
+        type: foreign
+        expr: order_key
+      - name: customer
+        type: foreign
+        expr: customer_key
+      - name: part
+        type: foreign
+        expr: part_key
+
+    dimensions:
+      - name: order_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: part_key
+        type: categorical
+        expr: part_key
+      - name: line_number
+        type: categorical
+        expr: line_number
+
+    measures:
+      - name: order_item_count
+        description: Distinct count of order items (order_item_key).
+        agg: count_distinct
+        expr: order_item_key
+      - name: int_order_items_order_count
+        description: Distinct count of orders represented by line items (order_key).
+        agg: count_distinct
+        expr: order_key
+      - name: int_order_items_gross_item_sales
+        description: Sum of extended_price across line items.
+        agg: sum
+        expr: extended_price
+      - name: int_order_items_item_discount
+        description: Sum of item_discount_amount across line items. With current macro this is negative (discounts are stored as negative amounts).
+        agg: sum
+        expr: item_discount_amount

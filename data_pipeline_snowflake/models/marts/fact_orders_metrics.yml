@@ -1,0 +1,74 @@
+version: 2
+
+metrics:
+  - name: order_count
+    label: Order Count
+    description: Distinct count of orders.
+    type: simple
+    type_params:
+      measure: order_count
+
+  - name: customer_count
+    label: Customer Count
+    description: Distinct count of customers.
+    type: simple
+    type_params:
+      measure: customer_count
+
+  - name: gross_item_sales
+    label: Gross Item Sales
+    description: Sum of gross item sales amount (sum of extended_price rolled up to orders).
+    type: simple
+    type_params:
+      measure: gross_item_sales
+
+  - name: item_discount_amount
+    label: Item Discount Amount
+    description: Sum of item_discount_amount (stored as a negative amount with current macro).
+    type: simple
+    type_params:
+      measure: item_discount
+
+  - name: net_sales
+    label: Net Sales
+    description: Sum of net_sales_amount derived in fact_orders.
+    type: simple
+    type_params:
+      measure: net_sales
+
+  - name: order_total_price
+    label: Order Total Price
+    description: Sum of source order header total_price.
+    type: simple
+    type_params:
+      measure: order_total_price
+
+  - name: avg_order_value_net
+    label: Average Order Value (Net)
+    description: Net Sales divided by Order Count.
+    type: derived
+    type_params:
+      expr: net_sales / order_count
+      metrics:
+        - name: net_sales
+        - name: order_count
+
+  - name: effective_discount_rate
+    label: Effective Discount Rate
+    description: Item Discount Amount divided by Gross Item Sales (negative with current macro).
+    type: derived
+    type_params:
+      expr: item_discount_amount / gross_item_sales
+      metrics:
+        - name: item_discount_amount
+        - name: gross_item_sales
+
+  - name: effective_discount_rate_positive
+    label: Effective Discount Rate (Positive)
+    description: Positive-presented discount rate (-Item Discount Amount / Gross Item Sales).
+    type: derived
+    type_params:
+      expr: -1 * item_discount_amount / gross_item_sales
+      metrics:
+        - name: item_discount_amount
+        - name: gross_item_sales

@@ -18,3 +18,22 @@ sources:
               - relationships:
                   to: source('tpch', 'orders')
                   field: o_orderkey
+
+      - name: customer
+        description: "TPCH customer source table"
+        columns:
+          - name: c_custkey
+            description: "Unique identifier for the customer"
+            tests:
+              - unique
+              - not_null
+          - name: c_name
+            description: "Customer name"
+          - name: c_nationkey
+            description: "Nation foreign key"
+          - name: c_acctbal
+            description: "Account balance"
+          - name: c_mktsegment
+            description: "Market segment"
+          - name: c_comment
+            description: "Customer comments or notes"

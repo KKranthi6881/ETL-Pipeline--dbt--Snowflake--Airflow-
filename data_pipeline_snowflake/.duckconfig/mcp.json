@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "snowflake": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "duckcodehub/duckcode-snowflake-mcp-server:latest",
+        "--connection",
+        "{\"account\":\"IHVBFGM-JC02537\",\"user\":\"SHAARAVKUMAR\",\"password\":\"MIIEvwIBADANBgkqhkiG9w0B\",\"warehouse\":\"DBT_WH\",\"database\":\"DBT_DB\",\"schema\":\"DBT_SCHEMA\",\"role\":\"DBT_ROLE\"}"
+      ],
+      "alwaysAllow": [
+        "query"
+      ]
+    }
+  }
+}

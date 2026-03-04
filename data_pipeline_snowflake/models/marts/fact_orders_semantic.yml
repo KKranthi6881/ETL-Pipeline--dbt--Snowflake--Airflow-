@@ -1,0 +1,51 @@
+version: 2
+
+semantic_models:
+  - name: fact_orders
+    description: Order-level fact enriched with item sales rollups and derived net sales.
+    model: ref('fact_orders')
+    defaults:
+      agg_time_dimension: order_date
+
+    entities:
+      - name: order
+        type: primary
+        expr: order_key
+      - name: customer
+        type: foreign
+        expr: customer_key
+
+    dimensions:
+      - name: order_date
+        type: time
+        type_params:
+          time_granularity: day
+      - name: status_code
+        type: categorical
+        expr: status_code
+
+    measures:
+      - name: order_count
+        description: Distinct count of orders (1 per order_key at this semantic model grain).
+        agg: count_distinct
+        expr: order_key
+      - name: customer_count
+        description: Distinct count of customers (by customer_key).
+        agg: count_distinct
+        expr: customer_key
+      - name: gross_item_sales
+        description: Sum of gross_item_sales_amount across orders. Upstream is item extended_price rolled up to order_key.
+        agg: sum
+        expr: gross_item_sales_amount
+      - name: item_discount
+        description: Sum of item_discount_amount across orders. With current macro this is negative (discounts are stored as negative amounts).
+        agg: sum
+        expr: item_discount_amount
+      - name: net_sales
+        description: Sum of net_sales_amount across orders, where net_sales_amount is derived in fact_orders.
+        agg: sum
+        expr: net_sales_amount
+      - name: order_total_price
+        description: Sum of source order header total_price across orders (from stg_tpch_orders).
+        agg: sum
+        expr: total_price

@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: rpt_tableau_orders_daily
+    description: Daily KPI rollup for Tableau executive dashboard.
+    columns:
+      - name: order_date
+        tests: [not_null, unique]
+      - name: order_count
+        tests: [not_null]
+      - name: net_sales_amount
+        tests: [not_null]
+
+  - name: rpt_tableau_status_daily
+    description: Daily KPI breakdown by order status code.
+    columns:
+      - name: order_date
+        tests: [not_null]
+      - name: status_code
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['P', 'O', 'F']
+
+  - name: rpt_tableau_top_customers
+    description: Customer leaderboard for Tableau top-customer analysis.
+    columns:
+      - name: customer_key
+        tests: [not_null, unique]
+      - name: net_sales_rank
+        tests: [not_null, unique]
+
+  - name: rpt_tableau_quality_signals_daily
+    description: Daily data quality signal table for impact-analysis dashboard.
+    columns:
+      - name: order_date
+        tests: [not_null, unique]
+
+  - name: rpt_tableau_lineage_edges
+    description: Curated lineage edge list from source tables to Tableau dashboards.
+    columns:
+      - name: from_node
+        tests: [not_null]
+      - name: to_node
+        tests: [not_null]
+
+  - name: rpt_tableau_impact_paths
+    description: Recursive downstream impact paths from changed upstream nodes.
+    columns:
+      - name: changed_node
+        tests: [not_null]
+      - name: impacted_node
+        tests: [not_null]
+      - name: depth
+        tests: [not_null]

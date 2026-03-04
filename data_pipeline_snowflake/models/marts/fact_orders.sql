@@ -1,11 +1,12 @@
 select
     orders.*,
     order_item_summary.gross_item_sales_amount,
-    order_item_summary.avg_item_discount_percentage_amount,
-    order_item_summary.item_discount_amount
+    order_item_summary.total_item_discount_amount,
+    (order_item_summary.gross_item_sales_amount - order_item_summary.total_item_discount_amount) as net_sales_amount
 from
-    {{ref('stg_tpch_orders')}} as orders
+    {{ ref('stg_tpch_orders') }} as orders
 join
-    {{ref('int_order_items_summary')}} as order_item_summary
+    {{ ref('int_order_items_summary') }} as order_item_summary
         on orders.order_key = order_item_summary.order_key
-order by order_date
+order by
+    orders.order_date

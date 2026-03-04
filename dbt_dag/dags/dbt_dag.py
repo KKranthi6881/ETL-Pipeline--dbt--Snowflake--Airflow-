@@ -2,16 +2,29 @@ import os
 from datetime import datetime
 
 from cosmos import DbtDag, ProjectConfig, ProfileConfig, ExecutionConfig
-from cosmos.profiles import SnowflakeUserPasswordProfileMapping
+from cosmos.profiles import SnowflakePrivateKeyPemProfileMapping, SnowflakeUserPasswordProfileMapping
+
+
+def _build_profile_mapping():
+    auth_method = os.getenv("AIRFLOW_SNOWFLAKE_AUTH_METHOD", "private_key").lower()
+    mapping_cls = (
+        SnowflakePrivateKeyPemProfileMapping
+        if auth_method in {"private_key", "keypair", "jwt"}
+        else SnowflakeUserPasswordProfileMapping
+    )
+    return mapping_cls(
+        conn_id=os.getenv("AIRFLOW_SNOWFLAKE_CONN_ID", "snowflake_conn_id"),
+        profile_args={
+            "database": os.getenv("DBT_SNOWFLAKE_DATABASE", "DUCKCODE_TEST_DATA"),
+            "schema": os.getenv("DBT_SNOWFLAKE_SCHEMA", "ANALYTICS"),
+        },
+    )
 
 
 profile_config = ProfileConfig(
-    profile_name="default",
+    profile_name="data_pipeline_snowflake",
     target_name="dev",
-    profile_mapping=SnowflakeUserPasswordProfileMapping(
-        conn_id="snowflake_conn_id",
-        profile_args={"database": "dbt_db", "schema": "dbt_schema"},
-    )
+    profile_mapping=_build_profile_mapping(),
 )
 
 dbt_snowflake_dag = DbtDag(

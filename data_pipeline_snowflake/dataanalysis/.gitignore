@@ -1,0 +1,13 @@
+# Ignore query results and data files
+*.csv
+*.json
+*.xlsx
+*.parquet
+results/
+output/
+data/
+
+# Keep SQL files and documentation
+!*.sql
+!README.md
+!.gitignore

@@ -1,0 +1,80 @@
+version: 2
+
+models:
+  - name: fact_orders
+    description: "Fact table containing all order metrics aggregated from orders and line items."
+    columns:
+      - name: order_id
+        description: "Unique identifier for each order."
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Foreign key referencing the customer dimension."
+        tests:
+          - not_null
+      - name: order_date
+        description: "Date the order was placed."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_to_exist
+      - name: ship_date
+        description: "Date when the order was shipped."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_greater_than:
+              value: "order_date"
+              strictly: true
+      - name: discount
+        description: "Applied discount rate on the order."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1
+      - name: total_price
+        description: "Total value of the order after discount."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_greater_than:
+              value: 0
+
+  - name: int_order_items
+    description: "Intermediate table with item-level order details."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: item_id
+        tests:
+          - unique
+          - not_null
+      - name: quantity
+        tests:
+          - dbt_expectations.expect_column_values_to_be_greater_than:
+              value: 0
+      - name: price
+        tests:
+          - dbt_expectations.expect_column_values_to_be_greater_than:
+              value: 0
+
+  - name: int_order_items_summary
+    description: "Aggregated metrics derived from order items."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+      - name: total_quantity
+        tests:
+          - dbt_expectations.expect_column_values_to_be_greater_than_or_equal_to:
+              value: 0
+      - name: total_revenue
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000
+      - name: avg_discount
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1

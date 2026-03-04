@@ -1,0 +1,37 @@
+key:
+  dbt_unique_id: model.data_pipeline_snowflake.stg_tpch_orders
+  fqn:
+    - data_pipeline_snowflake
+    - staging
+    - stg_tpch_orders
+perspectives:
+  business:
+    definition: >-
+      Represents the standardized staging view of customer orders from the TPCH dataset. Each record
+      corresponds to a single order placed by a customer, including order date, total price, and
+      status.
+  technical:
+    definition: >-
+      A dbt staging model built as a view over the source table tpch.orders. It renames and
+      standardizes key fields (e.g., o_orderkey → order_key) for downstream consumption in marts and
+      intermediate models.
+    gotchas:
+      - >-
+        Order status codes are not expanded; downstream models may need to map them to descriptive
+        values.
+      - >-
+        Order dates are stored as-is from the source; ensure timezone or date format consistency if
+        joining with other datasets.
+      - This model assumes the TPCH source data is complete and unfiltered.
+governance: {}
+columns: {}
+sample_queries:
+  - title: Preview recent orders by status
+    sql: >-
+      select status_code, count(*) as order_count from {{ ref('stg_tpch_orders') }} where order_date
+      >= current_date - interval '30 day' group by status_code;
+  - title: Check top customers by total order value
+    sql: >-
+      select customer_key, sum(total_price) as total_spent from {{ ref('stg_tpch_orders') }} group
+      by customer_key order by total_spent desc limit 10;
+version: 1

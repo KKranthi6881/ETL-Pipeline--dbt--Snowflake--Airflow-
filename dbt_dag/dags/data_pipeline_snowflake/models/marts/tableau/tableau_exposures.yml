@@ -1,0 +1,59 @@
+version: 2
+
+exposures:
+  - name: tableau_executive_kpis
+    label: Tableau - Executive KPIs
+    type: dashboard
+    maturity: high
+    description: >-
+      Primary business dashboard for orders, sales, discounts, and top customers.
+    url: https://prod-useast-a.online.tableau.com/
+    depends_on:
+      - ref('rpt_tableau_orders_daily')
+      - ref('rpt_tableau_status_daily')
+      - ref('rpt_tableau_top_customers')
+    owner:
+      name: Kranthi
+      email: your-email@company.com
+
+  - name: tableau_pipeline_health
+    label: Tableau - Pipeline Health
+    type: dashboard
+    maturity: medium
+    description: >-
+      Operational trust dashboard focused on data quality and reliability signals from marts.
+    url: https://prod-useast-a.online.tableau.com/
+    depends_on:
+      - ref('rpt_tableau_quality_signals_daily')
+      - ref('rpt_tableau_orders_daily')
+    owner:
+      name: Kranthi
+      email: your-email@company.com
+
+  - name: tableau_lineage_explorer
+    label: Tableau - Lineage Explorer
+    type: dashboard
+    maturity: high
+    description: >-
+      Source-to-dashboard lineage explorer for demoing end-to-end flow and dependencies.
+    url: https://prod-useast-a.online.tableau.com/
+    depends_on:
+      - ref('rpt_tableau_lineage_edges')
+    owner:
+      name: Kranthi
+      email: your-email@company.com
+
+  - name: tableau_impact_analysis
+    label: Tableau - Impact Analysis
+    type: dashboard
+    maturity: high
+    description: >-
+      Change-impact dashboard that shows downstream blast radius and KPI risk.
+    url: https://prod-useast-a.online.tableau.com/
+    depends_on:
+      - ref('rpt_tableau_impact_paths')
+      - ref('rpt_tableau_quality_signals_daily')
+      - ref('rpt_tableau_status_daily')
+    owner:
+      name: Kranthi
+      email: your-email@company.com

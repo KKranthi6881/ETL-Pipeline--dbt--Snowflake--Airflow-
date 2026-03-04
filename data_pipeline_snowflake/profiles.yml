@@ -1,0 +1,30 @@
+elementary:
+  outputs:
+    dev:
+      type: postgres
+      threads: 4
+      host: 127.0.0.1
+      port: 54322
+      user: postgres
+      pass: postgres
+      dbname: postgres
+      schema: elementary
+  target: dev
+
+data_pipeline_snowflake:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('DBT_SNOWFLAKE_ACCOUNT', 'xjixzmx-sc04945') }}"
+      user: "{{ env_var('DBT_SNOWFLAKE_USER', 'SONICKUMAR') }}"
+      authenticator: "{{ env_var('DBT_SNOWFLAKE_AUTHENTICATOR', 'externalbrowser') }}"
+      password: "{{ env_var('DBT_SNOWFLAKE_PASSWORD', '') }}"
+      private_key_path: "{{ env_var('DBT_SNOWFLAKE_PRIVATE_KEY_PATH', '') }}"
+      private_key_passphrase: "{{ env_var('DBT_SNOWFLAKE_PRIVATE_KEY_PASSPHRASE', '') }}"
+      role: "{{ env_var('DBT_SNOWFLAKE_ROLE', 'ACCOUNTADMIN') }}"
+      warehouse: "{{ env_var('DBT_SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH') }}"
+      database: "{{ env_var('DBT_SNOWFLAKE_DATABASE', 'DUCKCODE_TEST_DATA') }}"
+      schema: "{{ env_var('DBT_SNOWFLAKE_SCHEMA', 'ANALYTICS') }}"
+      client_session_keep_alive: false
+      threads: 4

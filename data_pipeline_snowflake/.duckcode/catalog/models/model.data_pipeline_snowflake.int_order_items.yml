@@ -1,0 +1,38 @@
+key:
+  dbt_unique_id: model.data_pipeline_snowflake.int_order_items
+  fqn:
+    - data_pipeline_snowflake
+    - marts
+    - int_order_items
+perspectives:
+  business:
+    definition: >-
+      The int_order_items model represents the detailed line items associated with each customer
+      order, combining order-level and item-level data to support downstream order and revenue
+      analysis. It provides a unified view of items purchased, their prices, and discounts applied.
+  technical:
+    definition: >-
+      This table joins stg_tpch_orders and stg_tpch_line_items on order_key to produce one record
+      per order item. It includes keys, pricing fields, discount percentages, and a computed
+      item_discount_amount calculated as (-1 * extended_price * discount_percentage). The data is
+      ordered by order_date for deterministic output.
+    gotchas:
+      - item_discount_amount is stored as a negative value to represent a reduction in price.
+      - >-
+        Ensure discount_percentage is expressed as a decimal (e.g., 0.05 for 5%) to avoid inflated
+        discount amounts.
+      - >-
+        Ordering by order_date may not guarantee deterministic ordering if multiple items share the
+        same date.
+governance: {}
+columns: {}
+sample_queries:
+  - title: Total discount amount by order
+    sql: >-
+      select order_key, sum(item_discount_amount) as total_discount_amount from int_order_items
+      group by order_key;
+  - title: Average discount percentage by customer
+    sql: >-
+      select customer_key, avg(discount_percentage) as avg_discount_pct from int_order_items group
+      by customer_key;
+version: 1

@@ -1,2 +1,5 @@
 project:
     name: dbt-dag
+    postgres_port: 5492
+    webserver_port: 8081
+

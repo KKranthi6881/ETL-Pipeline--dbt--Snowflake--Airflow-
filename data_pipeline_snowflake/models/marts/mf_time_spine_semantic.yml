@@ -1,0 +1,7 @@
+version: 2
+
+# NOTE: Time spine for MetricFlow is provided by the dbt model
+# `metricflow_time_spine.sql` via its meta configuration.
+# This file is intentionally left without semantic models to avoid semantic
+# manifest validation errors for a spine-only dataset.
+semantic_models: []

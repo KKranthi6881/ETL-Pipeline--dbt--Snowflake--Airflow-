@@ -1,0 +1,43 @@
+version: 2
+
+metrics:
+  - name: int_order_items_summary_order_count
+    label: Order Count (Order Item Summary)
+    description: Distinct count of orders.
+    type: simple
+    type_params:
+      measure: int_order_items_summary_order_count
+
+  - name: int_order_items_summary_gross_item_sales
+    label: Gross Item Sales (Order Item Summary)
+    description: Sum of gross item sales amount (sum of extended_price rolled up to orders).
+    type: simple
+    type_params:
+      measure: int_order_items_summary_gross_item_sales
+
+  - name: int_order_items_summary_item_discount_amount
+    label: Item Discount Amount (Order Item Summary)
+    description: Sum of item_discount_amount (stored as a negative amount with current macro).
+    type: simple
+    type_params:
+      measure: int_order_items_summary_item_discount
+
+  - name: int_order_items_summary_effective_discount_rate
+    label: Effective Discount Rate (Order Item Summary)
+    description: Item Discount Amount divided by Gross Item Sales (negative with current macro).
+    type: derived
+    type_params:
+      expr: int_order_items_summary_item_discount_amount / int_order_items_summary_gross_item_sales
+      metrics:
+        - name: int_order_items_summary_item_discount_amount
+        - name: int_order_items_summary_gross_item_sales
+
+  - name: int_order_items_summary_effective_discount_rate_positive
+    label: Effective Discount Rate (Positive, Order Item Summary)
+    description: Positive-presented discount rate (-Item Discount Amount / Gross Item Sales).
+    type: derived
+    type_params:
+      expr: -1 * int_order_items_summary_item_discount_amount / int_order_items_summary_gross_item_sales
+      metrics:
+        - name: int_order_items_summary_item_discount_amount
+        - name: int_order_items_summary_gross_item_sales
